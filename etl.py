@@ -1,7 +1,7 @@
 import os
 import configparser
 from datetime import datetime
-from os.path import join
+from os.path import join, dirname, abspath
 
 from pyspark.sql.types import StructType, StructField, StringType, DoubleType
 from pyspark.sql import SparkSession
@@ -166,9 +166,10 @@ def process_log_data(spark, input_data, output_data):
 
 
 def main():
+    ROOT_DIR = dirname(abspath(__file__))
     spark = create_spark_session()
     input_data = 's3a://udacity-dend/'
-    output_data = 's3a://waglds-lake-bucket/'
+    output_data = ROOT_DIR + 'data/'
 
     process_song_data(spark, input_data, output_data)
     process_log_data(spark, input_data, output_data)
