@@ -169,7 +169,7 @@ def main():
     ROOT_DIR = dirname(abspath(__file__))
     spark = create_spark_session()
     input_data = 's3a://udacity-dend/'
-    output_data = ROOT_DIR + 'data/'
+    output_data = ROOT_DIR + '/data/'
 
     process_song_data(spark, input_data, output_data)
     process_log_data(spark, input_data, output_data)
