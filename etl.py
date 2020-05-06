@@ -23,7 +23,7 @@ os.environ['AWS_ACCESS_KEY_ID'] = config['AWS']['AWS_ACCESS_KEY_ID']
 os.environ['AWS_SECRET_ACCESS_KEY'] = config['AWS']['AWS_SECRET_ACCESS_KEY']
 
 
-def create_spark_session():
+def create_spark_session() -> SparkSession:
     """
     Fetches or creates a spark session.
     """
@@ -34,7 +34,17 @@ def create_spark_session():
     return spark
 
 
-def process_song_data(spark, input_data, output_data):
+def process_song_data(
+        spark: SparkSession,
+        input_data: str,
+        output_data: str
+) -> None:
+    """
+    Loads data from song_data dataset and creates and ingests data
+    within the Star Schema. The star schema consists of the
+    following tables:
+    songs and artists.
+    """
     # get filepath to song data file
     song_data = input_data + 'song_data/*/*/*/'
 
@@ -82,7 +92,17 @@ def process_song_data(spark, input_data, output_data):
     )
 
 
-def process_log_data(spark, input_data, output_data):
+def process_log_data(
+        spark: SparkSession,
+        input_data: str,
+        output_data: str
+) -> None:
+    """
+    Loads data from log_data dataset and creates and ingests data
+    within the Star Schema. The star schema consists of the
+    following tables:
+    users, time and songplays.
+    """
     # get filepath to log data file
     log_data = input_data + 'log-data/*'
 
@@ -165,7 +185,10 @@ def process_log_data(spark, input_data, output_data):
         parquet(join(output_data, 'songplays/songplays.parquet'), 'overwrite')
 
 
-def main():
+def main() -> None:
+    """
+    Main method. Runs the two data lake functions above.
+    """
     ROOT_DIR = dirname(abspath(__file__))
     spark = create_spark_session()
     input_data = 's3a://udacity-dend/'
