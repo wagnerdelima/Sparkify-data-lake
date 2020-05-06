@@ -3,9 +3,9 @@ import configparser
 from datetime import datetime
 from os.path import join
 
-from pyspark.sql.types import StructType, StructField, StringType, DoubleType, LongType, TimestampType
+from pyspark.sql.types import StructType, StructField, StringType, DoubleType
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import udf, col
+from pyspark.sql.functions import udf
 from pyspark.sql.functions import (
     year,
     month,
@@ -77,7 +77,9 @@ def process_song_data(spark, input_data, output_data):
     artists_table.createOrReplaceTempView('artists')
     # # write artists table to parquet files
     artists_table.write.parquet(
-        join(output_data, 'artists/artists.parquet'), 'overwrite')
+        join(output_data, 'artists/artists.parquet'),
+        'overwrite'
+    )
 
 
 def process_log_data(spark, input_data, output_data):
@@ -103,11 +105,17 @@ def process_log_data(spark, input_data, output_data):
 
     users_table.createOrReplaceTempView('users')
     # write users table to parquet files
-    users_table.write.parquet(join(output_data, 'users/users.parquet'), 'overwrite')
+    users_table.write.parquet(
+        join(output_data, 'users/users.parquet'),
+        'overwrite'
+    )
 
     # create timestamp column from original timestamp column
     get_timestamp = udf(lambda x: str(int(int(x) / 1000)))
-    actions_df = actions_df.withColumn('timestamp', get_timestamp(actions_df.ts))
+    actions_df = actions_df.withColumn(
+        'timestamp',
+        get_timestamp(actions_df.ts)
+    )
 
     # create datetime column from original timestamp column
     get_datetime = udf(lambda x: str(datetime.fromtimestamp(int(x) / 1000)))
@@ -135,7 +143,8 @@ def process_log_data(spark, input_data, output_data):
         (actions_df.artist == song_df.artist_name),
         'inner'
     )
-    # extract columns from joined song and log datasets to create songplays table
+    # extract columns from joined
+    # song and log datasets to create songplays table
     songplays_table = joined_df.select(
         actions_df.datetime.alias('start_time'),
         actions_df.userId.alias('user_id'),
